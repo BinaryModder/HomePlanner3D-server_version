@@ -109,18 +109,17 @@ func (r *mutationResolver) CreatePlanningProject(ctx context.Context, input mode
 	}
 	// Если не удалось определить userID — используем существующего пользователя или создаём дефолтного
 	if userID == 0 {
-		//	var existing models.User
-		//if err := db.First(&existing).Error; err != nil {
-		// Создаём дефолтного пользователя
-		//def := models.User{Login: "default", Password: "default", Username: "Default"}
-		//if err := db.Create(&def).Error; err != nil {
-		//log.Printf("failed to create default user: %v", err)
-		//} else {
-		//userID = def.ID
-		//}
-		//} else {
-		//userID = existing.ID
-		//}
+			var existing models.User
+		if err := db.First(&existing).Error; err != nil {
+		def := models.User{Login: "default", Password: "default", Username: "Default"}
+		if err := db.Create(&def).Error; err != nil {
+		log.Printf("failed to create default user: %v", err)
+		} else {
+		userID = def.ID
+		}
+		} else {
+		userID = existing.ID
+		}
 		return nil, fmt.Errorf("user not found")
 
 	}
@@ -336,22 +335,21 @@ func (r *queryResolver) GetUserProjects(ctx context.Context, userID string) ([]*
 	// Конвертируем в GraphQL модели
     var graphQLProjects []*model.PlanningProject
     for i := range dbProjects {
-        st := strings.ToLower(strings.TrimSpace(dbProjects[i].Status))
 
-        isApproved := st == "можно"
-        isLegal := isApproved || strings.Contains(st, "можно при услов")
+//       isApproved := st == "можно"
+  //      isLegal := isApproved || strings.Contains(st, "можно при услов")
         //isProhibited := strings.Contains(st, "нельзя") || strings.Contains(st, "запрещ") || strings.Contains(st, "не может быть одобрен")
         //isPending := st == "pending" || st == ""
 
-        if projectsFilter == "approved" || onlyApproved {
-            if !isApproved {
-                continue
-            }
-        } else if projectsFilter == "legal" {
-            if !isLegal {
-                continue
-            }
-        }
+    //    if projectsFilter == "approved" || onlyApproved {
+      //      if !isApproved {
+        //        continue
+         //   }
+        //} else if projectsFilter == "legal" {
+          //  if !isLegal {
+            //    continue
+            //}
+       // }
         //if isProhibited || isPending {
           //  if projectsFilter != "legal" && projectsFilter != "approved" && !onlyApproved {
                 // без фильтра возвращаем все, но исключим ярые pending? оставим как есть
